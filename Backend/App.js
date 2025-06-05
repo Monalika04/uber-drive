@@ -3,13 +3,26 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const connectToDb = require('./db/db');
+const userRoutes = require('./routes/user.route');
+
+
+// Connect to the database
+connectToDb();
+
+
+
 
 // Middleware that allows your API to be accessed from a different domain (used in frontend-backend setups).
 app.use(cors());
+app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded request bodies
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+app.use('/users', userRoutes); // Use user routes for any requests to /api/users
 
 
 module.exports = app;
