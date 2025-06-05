@@ -1,16 +1,26 @@
-# User Registration Endpoint Documentation
+# API Documentation
 
-## Endpoint
+## /users/register Endpoint
 
-`POST /users/register`
+### Description
 
-## Description
+Registers a new user by creating a user account with the provided information.
 
-This endpoint allows a new user to register by providing their first name, last name, email, and password. On successful registration, it returns a JWT authentication token and the created user object.
+### HTTP Method
 
-## Request Body
+**POST**
 
-Send a JSON object in the following format:
+### Request Body
+
+The request body should be in JSON format and include the following fields:
+
+- **fullname** (object):
+  - **firstname** (string, required): User's first name (minimum 3 characters).
+  - **lastname** (string, optional): User's last name (minimum 3 characters).
+- **email** (string, required): User's email address (must be a valid email).
+- **password** (string, required): User's password (minimum 6 characters).
+
+#### Example Request
 
 ```json
 {
@@ -23,63 +33,129 @@ Send a JSON object in the following format:
 }
 ```
 
-### Field Requirements
+### Example Response
 
-- `fullname.firstname` (string, required): Minimum 3 characters.
-- `fullname.lastname` (string, required): Minimum 3 characters.
-- `email` (string, required): Must be a valid email address.
-- `password` (string, required): Minimum 6 characters.
+```json
+{
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+  },
+  "token": "<JWT Token>"
+}
+```
 
-## Responses
+---
 
-### Success
+## /users/login Endpoint
 
-- **Status Code:** `201 Created`
-- **Body:**
-  ```json
-  {
-    "token": "<jwt_token>",
-    "user": {
-      "_id": "<user_id>",
-      "fullname": {
-        "firstname": "John",
-        "lastname": "Doe"
-      },
-      "email": "john.doe@example.com",
-      "socketId": null
-    }
-  }
-  ```
+### Description
 
-### Validation Error
+Authenticates a user using their email and password, returning a JWT token upon successful login.
 
-- **Status Code:** `400 Bad Request`
-- **Body:**
-  ```json
-  {
-    "errors": [
-      {
-        "msg": "Error message",
-        "param": "field",
-        "location": "body"
-      }
-    ]
-  }
-  ```
+### HTTP Method
 
-### Example Request (cURL)
+**POST**
 
-```bash
-curl -X POST http://localhost:3000/users/register \
-  -H "Content-Type: application/json" \
-  -d '{
+### Endpoint
+
+`/users/login`
+
+### Request Body
+
+The request body should be in JSON format and include the following fields:
+
+- **email** (string, required): User's email address (must be a valid email).
+- **password** (string, required): User's password (minimum 6 characters).
+
+#### Example Request
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "yourPassword123"
+}
+```
+
+### Example Response
+
+```json
+{
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+  },
+  "token": "<JWT Token>"
+}
+```
+
+---
+
+## /users/profile Endpoint
+
+### Description
+
+Retrieves the profile information of the currently authenticated user. Requires a valid JWT token in the request (sent via cookie or Authorization header).
+
+### HTTP Method
+
+**GET**
+
+### Authentication
+
+- Requires authentication via JWT token (cookie or `Authorization: Bearer <token>` header).
+
+### Example Response
+
+```json
+{
+  "user": {
+    "_id": "<user_id>",
     "fullname": {
       "firstname": "John",
       "lastname": "Doe"
     },
     "email": "john.doe@example.com",
-    "password": "yourPassword123"
-  }'
+    "socketId": null
+  }
+}
 ```
 
+### Error Response
+
+- **401 Unauthorized** if token is missing or invalid.
+- **404 Not Found** if user does not exist.
+
 ---
+
+## /users/logout Endpoint
+
+### Description
+
+Logs out the currently authenticated user by blacklisting their JWT token and clearing the authentication cookie.
+
+### HTTP Method
+
+**GET**
+
+### Authentication
+
+- Requires authentication via JWT token (cookie or `Authorization: Bearer <token>` header).
+
+### Example Response
+
+```json
+{
+  "message": "User logged out successfully"
+}
+```
+
+### Error Response
+
+- **401 Unauthorized** if token is missing or invalid.
