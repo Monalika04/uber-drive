@@ -234,3 +234,127 @@ The request body should be in JSON format and include the following fields:
 - **400 Bad Request**: If the email already exists.
 
 ---
+
+## /captains/login Endpoint
+
+### Description
+
+Authenticates a captain using their email and password, returning a JWT token upon successful login.
+
+### HTTP Method
+
+**POST**
+
+### Request Body
+
+The request body should be in JSON format and include the following fields:
+
+- **email** (string, required): Captain's email address (must be a valid email).
+- **password** (string, required): Captain's password (minimum 6 characters).
+
+#### Example Request
+
+```json
+{
+  "email": "alice.smith@example.com",
+  "password": "securePassword123"
+}
+```
+
+### Example Response
+
+```json
+{
+  "token": "<JWT Token>",
+  "captain": {
+    "_id": "<captain_id>",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Error Responses
+
+- **400 Bad Request**: If required fields are missing or validation fails.
+- **401 Unauthorized**: If email or password is incorrect.
+
+---
+
+## /captains/profile Endpoint
+
+### Description
+
+Retrieves the profile information of the currently authenticated captain. Requires a valid JWT token in the request (sent via cookie or Authorization header).
+
+### HTTP Method
+
+**GET**
+
+### Authentication
+
+- Requires authentication via JWT token (cookie or `Authorization: Bearer <token>` header).
+
+### Example Response
+
+```json
+{
+  "captain": {
+    "_id": "<captain_id>",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Error Response
+
+- **401 Unauthorized** if token is missing or invalid.
+
+---
+
+## /captains/logout Endpoint
+
+### Description
+
+Logs out the currently authenticated captain by blacklisting their JWT token and clearing the authentication cookie.
+
+### HTTP Method
+
+**GET**
+
+### Authentication
+
+- Requires authentication via JWT token (cookie or `Authorization: Bearer <token>` header).
+
+### Example Response
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Error Response
+
+- **401 Unauthorized** if token is missing or invalid.
+
+---
