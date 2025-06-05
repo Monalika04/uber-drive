@@ -159,3 +159,78 @@ Logs out the currently authenticated user by blacklisting their JWT token and cl
 ### Error Response
 
 - **401 Unauthorized** if token is missing or invalid.
+
+---
+
+## /captains/register Endpoint
+
+### Description
+
+Registers a new captain (driver) with their personal and vehicle information.
+
+### HTTP Method
+
+**POST**
+
+### Request Body
+
+The request body should be in JSON format and include the following fields:
+
+- **fullname** (object):
+  - **firstname** (string, required): Captain's first name (minimum 3 characters).
+  - **lastname** (string, optional): Captain's last name (minimum 3 characters).
+- **email** (string, required): Captain's email address (must be a valid email).
+- **password** (string, required): Captain's password (minimum 6 characters).
+- **vehicle** (object, required):
+  - **color** (string, required): Vehicle color (minimum 3 characters).
+  - **plate** (string, required): Vehicle plate number (minimum 3 characters).
+  - **capacity** (integer, required): Vehicle capacity (minimum 1).
+  - **vehicleType** (string, required): Type of vehicle. Must be one of: `"car"`, `"motorcycle"`, `"auto"`.
+
+#### Example Request
+
+```json
+{
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "password": "securePassword123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Example Response
+
+```json
+{
+  "token": "<JWT Token>",
+  "captain": {
+    "_id": "<captain_id>",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Error Responses
+
+- **400 Bad Request**: If required fields are missing or validation fails.
+- **400 Bad Request**: If the email already exists.
+
+---
