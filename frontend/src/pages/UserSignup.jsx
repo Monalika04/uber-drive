@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {UserDataContext} from '../context/UserContext';
 
 const UserSignup = () => {
   const[email,setEmail]=useState('')
@@ -9,20 +13,37 @@ const UserSignup = () => {
   const[userData,setUserData]=useState({})
 
 
-  const submitHandler = (e) => {
+  const navigate=useNavigate()
+  const { user, setUser } = useContext(UserDataContext);
+
+
+
+
+
+
+  const submitHandler =async (e) => {
   e.preventDefault();
 
-  const form = {
-    fullName: {
-      firstName,
-      lastName,
+  const newUser = {
+    fullname: {
+      firstname:firstName,
+      lastname:lastName
     },
-    email,
-    password,
-  };
+    email:email,
+    password:password
+  }
 
-  setUserData(form);      // Save in state if needed later
-  console.log(form);      // ✅ Correctly logs the data now
+  const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`,newUser)
+
+  if(response.status===201)
+{
+    const data=response.data
+
+    setUser(data.user)
+    localStorage.setItem('token',data.token)
+    navigate('/home')
+}
+   // ✅ Correctly logs the data now
 
   // Clear form
   setEmail('');
@@ -34,10 +55,11 @@ const UserSignup = () => {
 
 
 
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl">
-        {/* Uber Logo */}
+      
         <div className="flex justify-center mb-6">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
